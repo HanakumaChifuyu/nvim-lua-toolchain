@@ -1,0 +1,18 @@
+_nvim := "nvim --headless --noplugin -u tests/minimal_init.lua"
+_init := "tests/minimal_init.lua"
+
+# Run all tests, or specific files: just test tests/foo_spec.lua tests/bar_spec.lua
+test *files:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ -z "{{files}}" ]; then
+        {{_nvim}} \
+          -c "lua require('plenary.test_harness').test_directory('tests/', {minimal_init='{{_init}}', sequential=true})" \
+          -c "qa"
+    else
+        for file in {{files}}; do
+            {{_nvim}} \
+              -c "lua require('plenary.test_harness').test_file('${file}', {minimal_init='{{_init}}'})" \
+              -c "qa"
+        done
+    fi
