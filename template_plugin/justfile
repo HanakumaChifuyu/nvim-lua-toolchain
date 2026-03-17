@@ -1,6 +1,7 @@
 _nvim := "nvim --headless --noplugin -u tests/minimal_init.lua"
 _init := "tests/minimal_init.lua"
 _luacov := "tests/.rocks/bin/luacov"
+min_coverage := "80"
 
 # Run all tests, or specific files: just test tests/foo_spec.lua tests/bar_spec.lua
 test *files:
@@ -31,3 +32,29 @@ coverage:
     echo ""
     echo "=== Coverage report ==="
     awk '/^=+$/{found++} found>=3' tests/luacov.report.out
+
+# Run coverage and fail if total is below min_coverage (default: 80%)
+# Override: just check-coverage min_coverage=90
+check-coverage min_coverage=min_coverage:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    just coverage
+    total=$(awk '/^Total/{print $NF}' tests/luacov.report.out | tr -d '%')
+    if [ -z "$total" ]; then
+        echo "ERROR: could not parse Total line from tests/luacov.report.out" >&2
+        exit 1
+    fi
+    echo ""
+    if awk "BEGIN { exit ($total >= {{min_coverage}}) }"; then
+        echo "FAIL: coverage ${total}% is below minimum {{min_coverage}}%" >&2
+        exit 1
+    fi
+    echo "PASS: coverage ${total}% >= {{min_coverage}}%"
+
+# Format all Lua files with stylua
+fmt:
+    stylua lua/ tests/
+
+# Check formatting without modifying files
+fmt-check:
+    stylua --check lua/ tests/

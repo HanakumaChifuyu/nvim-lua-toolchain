@@ -61,7 +61,84 @@ copy_template_file() {
 
 apply_templates() {
     copy_template_file "tests/minimal_init.lua" "tests/minimal_init.lua"
-    copy_template_file ".luacov" ".luacov"
+    copy_template_file ".luacov"                ".luacov"
+    copy_template_file "lefthook.yml"           "lefthook.yml"
+    copy_template_file "justfile"               "justfile"
+    copy_template_file "stylua.toml"            "stylua.toml"
+}
+
+# ── stylua ─────────────────────────────────────────────────────────────────────
+install_stylua() {
+    if command -v stylua >/dev/null 2>&1; then
+        printf 'SKIP  stylua already installed (%s)\n' "$(stylua --version 2>&1)"
+        return 0
+    fi
+
+    # Prefer cargo if available
+    if command -v cargo >/dev/null 2>&1; then
+        printf 'Installing stylua via cargo ...\n'
+        cargo install stylua
+        return 0
+    fi
+
+    # Fall back to downloading the binary from GitHub releases
+    local version
+    version="$(curl -fsSL https://api.github.com/repos/JohnnyMorganz/StyLua/releases/latest \
+        | grep '"tag_name"' | head -1 | sed 's/.*"v\([^"]*\)".*/\1/')"
+
+    if [ -z "$version" ]; then
+        printf 'WARN  could not fetch latest stylua version — install manually:\n'
+        printf '      https://github.com/JohnnyMorganz/StyLua/releases\n'
+        return 0
+    fi
+
+    local arch os asset
+    os="$(uname -s | tr '[:upper:]' '[:lower:]')"
+    arch="$(uname -m)"
+    case "$arch" in
+        x86_64)  arch="x86_64" ;;
+        aarch64|arm64) arch="aarch64" ;;
+        *)
+            printf 'WARN  unsupported arch %s — install stylua manually\n' "$arch"
+            return 0
+            ;;
+    esac
+    case "$os" in
+        linux)  asset="stylua-linux-${arch}.zip" ;;
+        darwin) asset="stylua-macos-${arch}.zip" ;;
+        *)
+            printf 'WARN  unsupported OS %s — install stylua manually\n' "$os"
+            return 0
+            ;;
+    esac
+
+    local url="https://github.com/JohnnyMorganz/StyLua/releases/download/v${version}/${asset}"
+    local tmp
+    tmp="$(mktemp -d)"
+    printf 'Downloading stylua v%s ...\n' "$version"
+    curl -fsSL "$url" -o "$tmp/stylua.zip"
+    unzip -q "$tmp/stylua.zip" -d "$tmp"
+    install -m 755 "$tmp/stylua" "$HOME/.local/bin/stylua"
+    rm -rf "$tmp"
+    printf 'Installed stylua to ~/.local/bin/stylua\n'
+    printf 'Ensure ~/.local/bin is in your PATH.\n'
+}
+
+# ── lefthook ───────────────────────────────────────────────────────────────────
+install_lefthook_hooks() {
+    if ! command -v lefthook >/dev/null 2>&1; then
+        printf 'SKIP  lefthook not found — skipping hook installation\n'
+        printf '      Install: https://github.com/evilmartians/lefthook#installation\n'
+        return 0
+    fi
+
+    if [ ! -d "$TARGET_DIR/.git" ]; then
+        printf 'SKIP  no .git directory in %s — skipping lefthook install\n' "$TARGET_DIR"
+        return 0
+    fi
+
+    printf 'Running lefthook install ...\n'
+    (cd "$TARGET_DIR" && lefthook install)
 }
 
 # ── luacov ─────────────────────────────────────────────────────────────────────
@@ -85,11 +162,17 @@ Done. Next steps:
   # Run all tests
   cd "$TARGET_DIR" && just test
 
-  # Run a single spec
-  cd "$TARGET_DIR" && just test tests/your_spec.lua
-
   # Run tests + coverage report
   cd "$TARGET_DIR" && just coverage
+
+  # Check coverage against threshold (default 80%, edit justfile min_coverage to change)
+  cd "$TARGET_DIR" && just check-coverage
+
+  # Format Lua files
+  cd "$TARGET_DIR" && just fmt
+
+  # Git hooks (pre-commit: fmt + coverage check) — requires lefthook
+  cd "$TARGET_DIR" && lefthook install
 EOF
 }
 
@@ -101,7 +184,9 @@ main() {
     install)
         check_prerequisites
         apply_templates
+        install_stylua
         install_luacov
+        install_lefthook_hooks
         print_summary
         ;;
     check)

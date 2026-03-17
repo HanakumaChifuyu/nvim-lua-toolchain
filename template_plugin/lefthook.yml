@@ -1,0 +1,15 @@
+# Lefthook git hooks configuration.
+# Install: lefthook install
+# Skip all hooks for a commit: LEFTHOOK=0 git commit
+# Skip one hook:               LEFTHOOK_EXCLUDE=coverage git commit
+
+pre-commit:
+  commands:
+    # Format staged Lua files in-place, then re-stage them
+    fmt:
+      glob: "*.lua"
+      run: stylua {staged_files} && git add {staged_files}
+
+    # Run tests + coverage gate (default threshold: 80%, see justfile min_coverage)
+    coverage:
+      run: just check-coverage
