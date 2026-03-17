@@ -58,3 +58,7 @@ fmt:
 # Check formatting without modifying files
 fmt-check:
     stylua --check lua/ tests/
+
+# Lint with luacheck (only own source + spec files, not third-party deps)
+lint:
+    luacheck lua/ tests/ --exclude-files 'tests/.rocks/**'

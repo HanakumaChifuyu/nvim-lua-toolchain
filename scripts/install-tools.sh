@@ -62,6 +62,7 @@ copy_template_file() {
 apply_templates() {
     copy_template_file "tests/minimal_init.lua" "tests/minimal_init.lua"
     copy_template_file ".luacov"                ".luacov"
+    copy_template_file ".luacheckrc"            ".luacheckrc"
     copy_template_file "lefthook.yml"           "lefthook.yml"
     copy_template_file "justfile"               "justfile"
     copy_template_file "stylua.toml"            "stylua.toml"
@@ -122,6 +123,18 @@ install_stylua() {
     rm -rf "$tmp"
     printf 'Installed stylua to ~/.local/bin/stylua\n'
     printf 'Ensure ~/.local/bin is in your PATH.\n'
+}
+
+# ── luacheck ──────────────────────────────────────────────────────────────────
+check_luacheck() {
+    if command -v luacheck >/dev/null 2>&1; then
+        printf 'SKIP  luacheck already installed (%s)\n' "$(luacheck --version 2>&1 | head -1)"
+        return 0
+    fi
+
+    printf 'WARN  luacheck not found — install with one of:\n'
+    printf '      luarocks install luacheck\n'
+    printf '      apt install lua-check  (Debian/Ubuntu)\n'
 }
 
 # ── lefthook ───────────────────────────────────────────────────────────────────
@@ -185,6 +198,7 @@ main() {
         check_prerequisites
         apply_templates
         install_stylua
+        check_luacheck
         install_luacov
         install_lefthook_hooks
         print_summary

@@ -82,7 +82,6 @@ if vim.fn.filereadable(plenary_plugin) == 1 then
 end
 
 -- ── luarocks tree (luacov) ────────────────────────────────────────────────────
-local rocks_bin   = cwd .. "/tests/.rocks/lib/luarocks/rocks-5.1"
 local rocks_cpath = cwd .. "/tests/.rocks/lib/lua/5.1/?.so"
 local rocks_path  = cwd .. "/tests/.rocks/share/lua/5.1/?.lua;"
     .. cwd .. "/tests/.rocks/share/lua/5.1/?/init.lua"

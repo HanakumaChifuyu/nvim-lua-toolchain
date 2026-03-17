@@ -10,6 +10,11 @@ pre-commit:
       glob: "*.lua"
       run: stylua {staged_files} && git add {staged_files}
 
+    # Lint staged Lua files
+    lint:
+      glob: "*.lua"
+      run: luacheck {staged_files}
+
     # Run tests + coverage gate (default threshold: 80%, see justfile min_coverage)
     coverage:
       run: just check-coverage
