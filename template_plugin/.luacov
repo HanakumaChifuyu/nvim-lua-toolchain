@@ -2,7 +2,7 @@ return {
   statsfile = "tests/.luacov.stats.out",
   reportfile = "tests/luacov.report.out",
   include = {
-    "tests/fixtures/sample_buffer.lua",
+    "lua/my_namespace/tools.lua",
   },
   exclude = {
     "tests/vendor/.*",

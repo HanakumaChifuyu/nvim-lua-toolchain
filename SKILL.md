@@ -41,4 +41,6 @@ Use this skill to choose and configure a practical test-focused toolchain for Lu
 
 - `references/nvim-lua-tooling.md`: current tooling research, decision guide, and environment recommendations for Neovim Lua plugin development.
 - `scripts/install-tools.sh`: installs local sample-workflow dependencies for `plenary.nvim` and `luacov`.
+- `justfile`: runs all tests by default and targeted tests when file paths are passed.
+- `lua/my_namespace/tools.lua`: sample plugin-style module under test.
 - `tests/`: runnable sample using `vim.api` with Plenary and `luacov`.

@@ -27,6 +27,7 @@ require_cmd() {
 check_prerequisites() {
   require_cmd nvim
   require_cmd git
+  require_cmd just
   require_cmd luarocks
 }
 
@@ -62,8 +63,9 @@ print_summary() {
 Installed sample test dependencies.
 
 Next steps:
-  nvim --headless -u NONE -i NONE -c "luafile tests/minimal_init.lua" -c "PlenaryBustedFile tests/nvim_api_spec.lua" -c "qa"
-  tests/.rocks/bin/luacov
+  cd "$ROOT_DIR" && just test
+  cd "$ROOT_DIR" && just test tests/tools_spec.lua
+  cd "$ROOT_DIR" && tests/.rocks/bin/luacov
 EOF
 }
 

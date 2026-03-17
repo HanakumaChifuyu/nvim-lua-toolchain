@@ -57,16 +57,17 @@ Typical command:
 ```sh
 nvim --headless -u NONE -i NONE \
   -c "luafile tests/minimal_init.lua" \
-  -c "PlenaryBustedFile tests/nvim_api_spec.lua" \
+  -c "PlenaryBustedFile tests/tools_spec.lua" \
   -c "qa"
 ```
 
 This skill includes a sample local setup:
 
+- `lua/my_namespace/tools.lua`
+- `justfile`
 - `scripts/install-tools.sh`
 - `tests/minimal_init.lua`
-- `tests/fixtures/sample_buffer.lua`
-- `tests/nvim_api_spec.lua`
+- `tests/tools_spec.lua`
 
 #### `busted`
 
@@ -166,10 +167,8 @@ The local sample workflow in this skill is:
 
 ```sh
 ./scripts/install-tools.sh
-nvim --headless -u NONE -i NONE \
-  -c "luafile tests/minimal_init.lua" \
-  -c "PlenaryBustedFile tests/nvim_api_spec.lua" \
-  -c "qa"
+just test
+just test tests/tools_spec.lua
 tests/.rocks/bin/luacov
 ```
 
