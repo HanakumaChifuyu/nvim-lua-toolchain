@@ -66,6 +66,8 @@ apply_templates() {
     copy_template_file "lefthook.yml"           "lefthook.yml"
     copy_template_file "justfile"               "justfile"
     copy_template_file "stylua.toml"            "stylua.toml"
+    copy_template_file "scripts/code-review.sh" "scripts/code-review.sh"
+    chmod +x "$TARGET_DIR/scripts/code-review.sh"
 }
 
 # ── stylua ─────────────────────────────────────────────────────────────────────
