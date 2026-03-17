@@ -83,11 +83,10 @@ end
 
 -- ── luarocks tree (luacov) ────────────────────────────────────────────────────
 local rocks_cpath = cwd .. "/tests/.rocks/lib/lua/5.1/?.so"
-local rocks_path  = cwd .. "/tests/.rocks/share/lua/5.1/?.lua;"
-    .. cwd .. "/tests/.rocks/share/lua/5.1/?/init.lua"
+local rocks_path = cwd .. "/tests/.rocks/share/lua/5.1/?.lua;" .. cwd .. "/tests/.rocks/share/lua/5.1/?/init.lua"
 
-package.path      = rocks_path .. ";" .. package.path
-package.cpath     = rocks_cpath .. ";" .. package.cpath
+package.path = rocks_path .. ";" .. package.path
+package.cpath = rocks_cpath .. ";" .. package.cpath
 
 -- Load luacov if available (non-fatal — coverage is optional).
 -- plenary.busted calls `cquit` to exit, so subsequent -c commands never run.
@@ -97,13 +96,23 @@ package.cpath     = rocks_cpath .. ";" .. package.cpath
 -- line hooks that luacov relies on. jit.off() must be called BEFORE requiring
 -- luacov so the hook is installed while the interpreter is already off.
 if jit then
-  jit.off()
+    jit.off()
 end
-local luacov_ok = pcall(require, "luacov")
-if luacov_ok then
-  vim.api.nvim_create_autocmd("VimLeavePre", {
+
+local luacov_ok, luacov_err = pcall(require, "luacov")
+if not luacov_ok then
+    io.stderr:write(
+        "[minimal_init] ERROR: luacov not found.\n"
+        .. "  " .. tostring(luacov_err) .. "\n"
+        .. "  Run: luarocks --tree tests/.rocks --lua-version 5.1 install luacov\n"
+        .. "  Or:  ./scripts/install-tools.sh\n"
+    )
+    vim.cmd("cquit 1")
+    return
+end
+
+vim.api.nvim_create_autocmd("VimLeavePre", {
     callback = function()
-      require("luacov.runner").save_stats()
+        require("luacov.runner").save_stats()
     end,
-  })
-end
+})
