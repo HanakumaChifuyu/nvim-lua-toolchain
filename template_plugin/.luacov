@@ -2,12 +2,13 @@ return {
   statsfile = "tests/.luacov.stats.out",
   reportfile = "tests/luacov.report.out",
   include = {
-    "lua/my_namespace/tools.lua",
+    -- NOTE: luacov strips .lua before pattern matching, so omit the extension
+    "lua/my_namespace/",
   },
   exclude = {
     "tests/vendor/.*",
     "tests/.rocks/.*",
-    "tests/minimal_init.lua",
-    "tests/.*_spec.lua",
+    "tests/minimal_init",
+    "tests/.*_spec",
   },
 }

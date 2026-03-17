@@ -1,5 +1,6 @@
 _nvim := "nvim --headless --noplugin -u tests/minimal_init.lua"
 _init := "tests/minimal_init.lua"
+_luacov := "tests/.rocks/bin/luacov"
 
 # Run all tests, or specific files: just test tests/foo_spec.lua tests/bar_spec.lua
 test *files:
@@ -16,3 +17,17 @@ test *files:
               -c "qa"
         done
     fi
+
+# Run all tests in a single process and generate a luacov report
+coverage:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    rm -f tests/.luacov.stats.out tests/luacov.report.out
+    # Single-process: all specs run inside one nvim → luacov collects complete data
+    # VimLeavePre in minimal_init.lua flushes stats before cquit
+    {{_nvim}} \
+      -c "lua for _, f in ipairs(vim.fn.glob('tests/*_spec.lua', false, true)) do require('plenary.busted').run(f) end"
+    {{_luacov}}
+    echo ""
+    echo "=== Coverage report ==="
+    awk '/^=+$/{found++} found>=3' tests/luacov.report.out

@@ -90,5 +90,21 @@ local rocks_path  = cwd .. "/tests/.rocks/share/lua/5.1/?.lua;"
 package.path      = rocks_path .. ";" .. package.path
 package.cpath     = rocks_cpath .. ";" .. package.cpath
 
--- Load luacov if available (non-fatal — coverage is optional)
-pcall(require, "luacov")
+-- Load luacov if available (non-fatal — coverage is optional).
+-- plenary.busted calls `cquit` to exit, so subsequent -c commands never run.
+-- Use VimLeavePre to flush stats before nvim exits regardless of how it quits.
+--
+-- NOTE: LuaJIT JIT-compiles functions by default, which bypasses debug.sethook
+-- line hooks that luacov relies on. jit.off() must be called BEFORE requiring
+-- luacov so the hook is installed while the interpreter is already off.
+if jit then
+  jit.off()
+end
+local luacov_ok = pcall(require, "luacov")
+if luacov_ok then
+  vim.api.nvim_create_autocmd("VimLeavePre", {
+    callback = function()
+      require("luacov.runner").save_stats()
+    end,
+  })
+end
