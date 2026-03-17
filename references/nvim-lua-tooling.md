@@ -12,10 +12,9 @@
 
 Use this as the default for new Neovim Lua plugin repositories:
 
-- Format with `stylua`
-- Lint with `luacheck`
 - Test with `plenary.nvim` in headless Neovim
 - Generate coverage with `luacov`
+- Add formatting only if the repository wants it
 - Develop with `lua_ls` and `lazydev.nvim`
 - Manage plugin dependencies and local development with `lazy.nvim`
 
@@ -25,7 +24,7 @@ This stack is pragmatic, common in the ecosystem, and easy to explain to contrib
 
 ### Formatting
 
-Prefer `stylua`.
+Use `stylua` only when the repository wants a formatter.
 
 - Deterministic formatter with broad Lua support
 - Common choice for Lua and Neovim projects
@@ -34,12 +33,11 @@ Prefer `stylua`.
 
 ### Linting
 
-Prefer `luacheck`.
+Treat linting as optional in this skill.
 
-- Mature static analyzer and linter for Lua
-- Good at catching undefined globals, unused variables, and common mistakes
-- Works well for both plain Lua and Neovim Lua code with project-specific globals configured
-- Good Neovim integration through `nvim-lint`
+- There are workable options such as `luacheck`
+- However, this skill currently centers on executable test workflows instead of lint-first setups
+- If a repository already uses Lua linting successfully, preserve that setup rather than replacing it casually
 
 ### Testing
 
@@ -57,8 +55,18 @@ Prefer this for most Neovim Lua plugins.
 Typical command:
 
 ```sh
-nvim --headless -c "PlenaryBustedDirectory tests/ { minimal_init = './tests/minimal_init.lua' }"
+nvim --headless -u NONE -i NONE \
+  -c "luafile tests/minimal_init.lua" \
+  -c "PlenaryBustedFile tests/nvim_api_spec.lua" \
+  -c "qa"
 ```
+
+This skill includes a sample local setup:
+
+- `scripts/install-tools.sh`
+- `tests/minimal_init.lua`
+- `tests/fixtures/sample_buffer.lua`
+- `tests/nvim_api_spec.lua`
 
 #### `busted`
 
@@ -137,8 +145,6 @@ tests/
 
 ### Optional quality-of-life plugins
 
-- `conform.nvim` for formatter orchestration
-- `nvim-lint` for lint diagnostics
 - `neotest` for test UX
 - `nvim-coverage` for coverage visualization
 
@@ -156,9 +162,21 @@ Put that in a test bootstrap file or load it during the headless startup path us
 
 For CI, prefer a stable headless command and keep user config out of the run.
 
+The local sample workflow in this skill is:
+
+```sh
+./scripts/install-tools.sh
+nvim --headless -u NONE -i NONE \
+  -c "luafile tests/minimal_init.lua" \
+  -c "PlenaryBustedFile tests/nvim_api_spec.lua" \
+  -c "qa"
+tests/.rocks/bin/luacov
+```
+
 ## Decision rules
 
-- For a new Neovim Lua plugin, start with `stylua` + `luacheck` + `plenary.nvim` + `luacov`.
+- For a new Neovim Lua plugin, start with `plenary.nvim` + `luacov`.
 - If the repository is a pure Lua library, switch the testing default to `busted`.
 - If the repository mixes Lua and Vimscript, consider `vusted`.
-- If the user asks for editor integration, add `conform.nvim`, `nvim-lint`, `neotest`, or `nvim-coverage` only after the CLI workflow exists.
+- If the user asks for formatting, add `stylua` after the test workflow is already in place.
+- If the user asks for editor integration, add `neotest` or `nvim-coverage` only after the CLI workflow exists.

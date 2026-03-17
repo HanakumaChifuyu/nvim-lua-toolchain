@@ -1,0 +1,13 @@
+return {
+  statsfile = "tests/.luacov.stats.out",
+  reportfile = "tests/luacov.report.out",
+  include = {
+    "tests/fixtures/sample_buffer.lua",
+  },
+  exclude = {
+    "tests/vendor/.*",
+    "tests/.rocks/.*",
+    "tests/minimal_init.lua",
+    "tests/.*_spec.lua",
+  },
+}

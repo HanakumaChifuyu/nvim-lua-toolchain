@@ -449,3 +449,7 @@ docs/_templates/
 .hg/
 .bzr/
 .aider*
+tests/.rocks/
+vendor/
+tests/.luacov.stats.out
+tests/luacov.report.out
