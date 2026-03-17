@@ -1,0 +1,3 @@
+#!/bin/sh
+
+LUAROCKS_SYSCONFDIR='/usr/local/etc/luarocks' exec '/usr/sbin/lua5.1' -e 'package.path="/home/tohno/.claude/skills/nvim-lua-toolchain/template_plugin/tests/.rocks/share/lua/5.1/?.lua;/home/tohno/.claude/skills/nvim-lua-toolchain/template_plugin/tests/.rocks/share/lua/5.1/?/init.lua;"..package.path;package.cpath="/home/tohno/.claude/skills/nvim-lua-toolchain/template_plugin/tests/.rocks/lib/lua/5.1/?.so;"..package.cpath;local k,l,_=pcall(require,"luarocks.loader") _=k and l.add_context("luacov","0.17.0-1")' '/home/tohno/.claude/skills/nvim-lua-toolchain/template_plugin/tests/.rocks/lib/luarocks/rocks-5.1/luacov/0.17.0-1/bin/luacov' "$@"
