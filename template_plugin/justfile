@@ -1,4 +1,4 @@
-_nvim := "nvim --headless --noplugin -u tests/minimal_init.lua"
+_nvim := "nvim --headless -u tests/minimal_init.lua"
 _init := "tests/minimal_init.lua"
 _luacov := "tests/.rocks/bin/luacov"
 min_coverage := "70"
@@ -6,6 +6,11 @@ min_coverage := "70"
 # Default: run all pre-commit checks via lefthook
 default:
     lefthook run pre-commit
+
+# Launch nvim loaded with minimal_init.lua for manual interactive testing
+# Note: no --noplugin so that plugin/*.lua in rtp (including this repo) are sourced
+dev:
+    nvim -u tests/minimal_init.lua
 
 # Run all tests, or specific files: just test tests/foo_spec.lua tests/bar_spec.lua
 test *files:
