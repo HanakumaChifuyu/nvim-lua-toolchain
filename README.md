@@ -4,16 +4,31 @@ A one-command scaffold for a complete code-quality and test toolchain in Neovim 
 
 > 📖 [中文文档](doc/README.zh-CN.md)
 
-## Stack
+## What is This?
 
-| Tool | Purpose |
-|---|---|
-| [plenary.nvim](https://github.com/nvim-lua/plenary.nvim) | Test runner (headless nvim + busted-style specs) |
-| [luacov](https://github.com/lunarmodules/luacov) | Lua coverage instrumentation |
-| [stylua](https://github.com/JohnnyMorganz/StyLua) | Lua formatter |
-| [luacheck](https://github.com/mpeterv/luacheck) | Lua static analysis |
-| [lefthook](https://github.com/evilmartians/lefthook) | Git hooks manager |
-| [just](https://github.com/casey/just) | Task runner |
+This is a **Claude Code skill** that automates the setup of a complete Lua development and testing toolchain. While the scripts can be run standalone, using this as a skill within Claude Code provides several advantages:
+
+- **Intelligent automation**: Claude understands your project structure and adapts the setup accordingly
+- **Interactive guidance**: Get help troubleshooting issues during setup
+- **Integration with workflows**: Seamlessly integrate with other Claude Code skills and workflows
+- **Context-aware decisions**: Claude can make informed decisions about configuration based on your codebase
+
+To use this skill, invoke it in Claude Code with `/nvim-lua-toolchain` or let Claude suggest it when working on Lua/Neovim projects.
+
+## Stack & Dependencies
+
+The following tools are integrated into this toolchain. The installation script will help you set up most of them automatically:
+
+| Tool | Purpose | Auto-installed |
+|---|---|---|
+| [plenary.nvim](https://github.com/nvim-lua/plenary.nvim) | Test runner (headless nvim + busted-style specs) | Manual (Neovim plugin) |
+| [luacov](https://github.com/lunarmodules/luacov) | Lua coverage instrumentation | ✓ (via luarocks) |
+| [stylua](https://github.com/JohnnyMorganz/StyLua) | Lua formatter | ✓ (via cargo or binary) |
+| [luacheck](https://github.com/mpeterv/luacheck) | Lua static analysis | Instructions provided |
+| [lefthook](https://github.com/evilmartians/lefthook) | Git hooks manager | Manual |
+| [just](https://github.com/casey/just) | Task runner | Manual |
+
+**Prerequisites**: Install [just](https://github.com/casey/just#installation) and optionally [lefthook](https://github.com/evilmartians/lefthook#installation) before running the bootstrap script.
 
 ---
 

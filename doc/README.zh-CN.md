@@ -4,16 +4,31 @@
 
 一键为 Neovim Lua 插件仓库搭建完整开发质量工具链。
 
-## 包含内容
+## 这是什么？
 
-| 工具 | 用途 |
-|---|---|
-| [plenary.nvim](https://github.com/nvim-lua/plenary.nvim) | 测试框架（headless nvim + busted 风格） |
-| [luacov](https://github.com/lunarmodules/luacov) | Lua 覆盖率统计 |
-| [stylua](https://github.com/JohnnyMorganz/StyLua) | Lua 代码格式化 |
-| [luacheck](https://github.com/mpeterv/luacheck) | Lua 静态分析 |
-| [lefthook](https://github.com/evilmartians/lefthook) | Git hooks 管理 |
-| [just](https://github.com/casey/just) | 任务运行器 |
+这是一个 **Claude Code skill**，可以自动化设置完整的 Lua 开发和测试工具链。虽然这些脚本可以独立运行，但将其作为 skill 在 Claude Code 中使用有以下优势：
+
+- **智能自动化**：Claude 理解你的项目结构并相应地调整设置
+- **交互式指导**：在设置过程中遇到问题时获得帮助
+- **工作流集成**：与其他 Claude Code skills 和工作流无缝集成
+- **上下文感知**：Claude 可以根据你的代码库做出明智的配置决策
+
+在 Claude Code 中使用 `/nvim-lua-toolchain` 调用此 skill，或者在处理 Lua/Neovim 项目时让 Claude 自动建议使用。
+
+## 技术栈与依赖
+
+工具链集成了以下工具，安装脚本会自动帮你设置大部分工具：
+
+| 工具 | 用途 | 自动安装 |
+|---|---|---|
+| [plenary.nvim](https://github.com/nvim-lua/plenary.nvim) | 测试框架（headless nvim + busted 风格） | 手动（Neovim 插件） |
+| [luacov](https://github.com/lunarmodules/luacov) | Lua 覆盖率统计 | ✓（通过 luarocks） |
+| [stylua](https://github.com/JohnnyMorganz/StyLua) | Lua 代码格式化 | ✓（通过 cargo 或二进制） |
+| [luacheck](https://github.com/mpeterv/luacheck) | Lua 静态分析 | 提供安装说明 |
+| [lefthook](https://github.com/evilmartians/lefthook) | Git hooks 管理 | 手动 |
+| [just](https://github.com/casey/just) | 任务运行器 | 手动 |
+
+**前置要求**：运行初始化脚本前，请先安装 [just](https://github.com/casey/just#installation)，可选安装 [lefthook](https://github.com/evilmartians/lefthook#installation)。
 
 ---
 
