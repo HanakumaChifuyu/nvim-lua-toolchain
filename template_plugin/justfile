@@ -1,4 +1,4 @@
-_nvim := "nvim --headless -u tests/minimal_init.lua"
+_nvim := "nvim --headless --noplugin -u tests/minimal_init.lua"
 _init := "tests/minimal_init.lua"
 _luacov := "tests/.rocks/bin/luacov"
 min_coverage := "70"
@@ -36,7 +36,8 @@ coverage:
     # Single-process: all specs run inside one nvim → luacov collects complete data
     # VimLeavePre in minimal_init.lua flushes stats before cquit
     {{_nvim}} \
-      -c "lua for _, f in ipairs(vim.fn.glob('tests/*_spec.lua', false, true)) do require('plenary.busted').run(f) end"
+      -c "lua require('plenary.test_harness').test_directory('tests/', {minimal_init='{{_init}}', sequential=true})" \
+      -c "qa"
     {{_luacov}}
     echo ""
     echo "=== Coverage report ==="

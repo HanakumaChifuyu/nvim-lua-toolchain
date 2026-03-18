@@ -11,5 +11,8 @@ return {
     "tests/.rocks/.*",
     "tests/minimal_init",
     "tests/.*_spec",
+    ".*/plenary%.nvim/.*",
+    ".*/lazy/.*",
+    ".*/site/pack/.*",
   },
 }
